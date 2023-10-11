@@ -4,6 +4,7 @@ from moviepy.editor import VideoFileClip
 from moviepy.video.tools.subtitles import SubtitlesClip
 import requests
 from tempfile import NamedTemporaryFile
+import time 
 
 TOKEN = '6422706778:AAEkiNY4Qo65d3tZWfRYYlkeHVaLA3FnleU'
 bot = telebot.TeleBot(TOKEN)
