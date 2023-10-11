@@ -14,15 +14,20 @@ bot = telebot.TeleBot(TOKEN)
 def handle_start(message):
     bot.send_message(message.chat.id, "Welcome to Video Encoder! Send a video to burn subtitles.")
 
-def download_file(file_path, chat_id):
+def download_file(file_path):
     file_info = bot.get_file(file_path)
-    if not file_info:
-        bot.send_message(chat_id, "Error: File not found or unavailable.")
+    
+    if file_info is None:
+        bot.send_message(message.chat.id, "Error: File information not found.")
         return None
 
-    response = requests.get(f'https://api.telegram.org/file/bot{TOKEN}/{file_path}')
-    if response.status_code != 200:
-        bot.send_message(chat_id, f"Error: Failed to download the file. Status code: {response.status_code}")
+    file_url = 'https://api.telegram.org/file/bot{0}/{1}'.format(TOKEN, file_path)
+    
+    try:
+        response = requests.get(file_url)
+        response.raise_for_status()  # Check for HTTP errors
+    except requests.exceptions.RequestException as e:
+        bot.send_message(message.chat.id, f"Error: Failed to download the file. {e}")
         return None
 
     with NamedTemporaryFile(delete=False) as temp_file:
