@@ -13,6 +13,22 @@ bot = telebot.TeleBot(TOKEN)
 def handle_start(message):
     bot.send_message(message.chat.id, "Welcome to Video Encoder! Send video to burn subtitles.")
 
+def download_file(file_path):
+    file_info = bot.get_file(file_path)
+    if not file_info:
+        bot.send_message(message.chat.id, "Error: File not found or unavailable.")
+        return None
+
+    response = requests.get('https://api.telegram.org/file/bot{0}/{1}'.format(TOKEN, file_path))
+    if response.status_code != 200:
+        bot.send_message(message.chat.id, "Error: Failed to download the file.")
+        return None
+
+    with NamedTemporaryFile(delete=False) as temp_file:
+        temp_file.write(response.content)
+        return temp_file.name
+
+
 @bot.message_handler(content_types=['video'])
 def handle_video(message):
     bot.send_message(message.chat.id, "Received a video. Now please send the subtitle file (in .srt or .ass format) for burning into the video.")
