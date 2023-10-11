@@ -6,7 +6,7 @@ import requests
 from tempfile import NamedTemporaryFile
 
 # Your Telegram bot token
-TOKEN = 'YOUR_BOT_TOKEN'
+TOKEN = '6422706778:AAEkiNY4Qo65d3tZWfRYYlkeHVaLA3FnleU'
 bot = telebot.TeleBot(TOKEN)
 
 # Command to start the bot
