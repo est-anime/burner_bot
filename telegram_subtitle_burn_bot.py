@@ -3,7 +3,7 @@ import telebot
 from moviepy.editor import VideoFileClip
 from moviepy.video.tools.subtitles import SubtitlesClip
 
-TOKEN = 'YOUR_TELEGRAM_BOT_TOKEN'
+TOKEN = '6422706778:AAEkiNY4Qo65d3tZWfRYYlkeHVaLA3FnleU'
 bot = telebot.TeleBot(TOKEN)
 
 @bot.message_handler(content_types=['video'])
