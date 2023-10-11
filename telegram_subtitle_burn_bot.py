@@ -6,6 +6,11 @@ from moviepy.video.tools.subtitles import SubtitlesClip
 TOKEN = '6422706778:AAEkiNY4Qo65d3tZWfRYYlkeHVaLA3FnleU'
 bot = telebot.TeleBot(TOKEN)
 
+@bot.message_handler(commands=['start'])
+def handle_start(message):
+    # Respond to the /start command with a welcome message
+    bot.send_message(message.chat.id, "Welcome to my Telegram bot! Please type /help to see the available commands.")
+
 @bot.message_handler(content_types=['video'])
 def handle_video(message):
     file_id = message.video.file_id
