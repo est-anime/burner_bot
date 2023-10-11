@@ -1,17 +1,39 @@
-import telegram
-from telegram.ext import Updater, MessageHandler, Filters
+import os
+import telebot
+from moviepy.editor import VideoFileClip
+from moviepy.video.tools.subtitles import SubtitlesClip
 
-# Replace 'YOUR_BOT_TOKEN' with your actual bot token.
-bot = telegram.Bot(token='YOUR_BOT_TOKEN')
+TOKEN = 'YOUR_TELEGRAM_BOT_TOKEN'
+bot = telebot.TeleBot(TOKEN)
 
-def handle_message(update, context):
-    chat_id = update.effective_chat.id
-    text = update.message.text
-    # Handle user messages here
+@bot.message_handler(content_types=['video'])
+def handle_video(message):
+    file_id = message.video.file_id
+    file_info = bot.get_file(file_id)
+    file_path = file_info.file_path
+    video_path = download_video(file_path)
+    subtitle_path = 'your_subtitles.srt'
+    
+    # Burn subtitles
+    video_with_subtitles = burn_subtitles(video_path, subtitle_path)
+    
+    # Send the video with subtitles back to the user
+    bot.send_video(message.chat.id, open(video_with_subtitles, 'rb'))
 
-updater = Updater(token='YOUR_BOT_TOKEN', use_context=True)
-dispatcher = updater.dispatcher
-dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, handle_message))
+def download_video(file_path):
+    # Download the video from Telegram and return the local path
+    # You can use the 'requests' library or other methods to download the file
+    # Store it locally with a unique name
+    pass
 
-updater.start_polling()
-updater.idle()
+def burn_subtitles(video_path, subtitle_path):
+    # Use moviepy to burn subtitles into the video
+    video = VideoFileClip(video_path)
+    subtitles = SubtitlesClip(subtitle_path)
+    final_video = video.set_subtitles(subtitles)
+    output_path = 'output_video.mp4'
+    final_video.write_videofile(output_path)
+    return output_path
+
+if __name__ == '__main__':
+    bot.polling(none_stop=True)
