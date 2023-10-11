@@ -22,7 +22,7 @@ def download_file(file_path, chat_id):
 
     response = requests.get(f'https://api.telegram.org/file/bot{TOKEN}/{file_path}')
     if response.status_code != 200:
-        bot.send_message(chat_id, "Error: Failed to download the file.")
+        bot.send_message(chat_id, f"Error: Failed to download the file. Status code: {response.status_code}")
         return None
 
     with NamedTemporaryFile(delete=False) as temp_file:
