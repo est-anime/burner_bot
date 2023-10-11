@@ -2,14 +2,15 @@ import os
 import telebot
 from moviepy.editor import VideoFileClip
 from moviepy.video.tools.subtitles import SubtitlesClip
-import time
+import requests
+from tempfile import NamedTemporaryFile
 
 TOKEN = '6422706778:AAEkiNY4Qo65d3tZWfRYYlkeHVaLA3FnleU'
 bot = telebot.TeleBot(TOKEN)
 
 @bot.message_handler(commands=['start'])
 def handle_start(message):
-    bot.send_message(message.chat.id, "Welcome to my Telegram bot! Please type /help to see the available commands.")
+    bot.send_message(message.chat.id, "Welcome to Video Encoder! Send video to burn subtitles.")
 
 @bot.message_handler(content_types=['video'])
 def handle_video(message):
@@ -28,25 +29,20 @@ def process_subtitle(message):
         else:
             bot.send_message(message.chat.id, "Processing... This may take some time.")
             start_time = time.time()
-            video_path = download_video(file_path)
-            subtitle_path = download_subtitle(file_path)
+            video_path = download_file(file_path)
+            subtitle_path = download_file(file_path)
             video_with_subtitles = burn_subtitles(video_path, subtitle_path)
             end_time = time.time()
             processing_time = end_time - start_time
             bot.send_message(message.chat.id, f"Processing time: {processing_time:.2f} seconds")
             bot.send_video(message.chat.id, open(video_with_subtitles, 'rb'))
 
-def download_video(file_path):
-    # Download the video from Telegram and return the local path
-    # You can use the 'requests' library or other methods to download the file
-    # Store it locally with a unique name
-    pass
-
-def download_subtitle(file_path):
-    # Download the subtitle from Telegram and return the local path
-    # You can use the 'requests' library or other methods to download the file
-    # Store it locally with a unique name
-    pass
+def download_file(file_path):
+    file_info = bot.get_file(file_path)
+    response = requests.get('https://api.telegram.org/file/bot{0}/{1}'.format(TOKEN, file_path))
+    with NamedTemporaryFile(delete=False) as temp_file:
+        temp_file.write(response.content)
+        return temp_file.name
 
 def burn_subtitles(video_path, subtitle_path):
     video = VideoFileClip(video_path)
